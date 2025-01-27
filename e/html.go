@@ -4,7 +4,9 @@
 
 package e
 
-import "strconv"
+import (
+	"strconv"
+)
 
 const (
 	Stylesheet = "stylesheet"
@@ -132,8 +134,28 @@ const (
 	AttrVersion  = "version"
 	AttrXmlns    = "xmlns"
 
+	AsScript = "script"
+	AsStyle  = "style"
+
+	AutoCapitalizeCharacters = "characters"
+	AutoCapitalizeNone       = "none"
+	AutoCapitalizeOff        = "off"
+	AutoCapitalizeOn         = "on"
+	AutoCapitalizeSentences  = "sentences"
+	AutoCapitalizeWords      = "words"
+
+	AutoCompleteName        = "name"
 	AutoCompleteNewPassword = "new-password"
+	AutoCompleteOff         = "off"
+	AutoCompleteOn          = "on"
 	AutoCompleteUsername    = "username"
+
+	CaptureUser        = "user"
+	CaptureEnvironment = "environment"
+
+	MethodPost   = "post"
+	MethodGet    = "get"
+	MethodDialog = "dialog"
 
 	// Main root
 	TagHtml = "html"
@@ -913,14 +935,57 @@ func Accept(accept string) Node {
 	return &AttributeNode{Name: AttrAccept, Value: accept}
 }
 
+// AcceptCharset creates an "accept-charset" attribute
+func AcceptCharset() Node {
+	return &AttributeNode{Name: AttrAcceptCharset, Value: "UTF-8"}
+}
+
+// AccessKey creates an "accesskey" attribute
+func AccessKey(key string) Node {
+	return &AttributeNode{Name: AttrAccesskey, Value: key}
+}
+
 // Action creates an "action" attribute
 func Action(action string) Node {
 	return &AttributeNode{Name: AttrAction, Value: action}
 }
 
+// Allow creates an "allow" attribute
+func Allow(policy string) Node {
+	return &AttributeNode{Name: AttrAllow, Value: policy}
+}
+
+// Alt creates an "alt" attribute
+func Alt(text string) Node {
+	return &AttributeNode{Name: AttrAlt, Value: text}
+}
+
+// As creates an "as" attribute
+func As(what string) Node {
+	return &AttributeNode{Name: AttrAs, Value: what}
+}
+
+// Async creates an "async" attribute
+func Async(async ...bool) Node {
+	if len(async) > 0 && !async[0] {
+		return nil
+	}
+	return &AttributeNode{Name: AttrAsync, Value: ""}
+}
+
+// AutoCapitalize creates an "autocapitalize" attribute
+func AutoCapitalize(value string) Node {
+	return &AttributeNode{Name: AttrAutocapitalize, Value: value}
+}
+
 // AutoComplete creates an "autocomplete" attribute
 func AutoComplete(autocomplete string) Node {
 	return &AttributeNode{Name: AttrAutocomplete, Value: autocomplete}
+}
+
+// Capture creates a "capture" attribute
+func Capture(value string) Node {
+	return &AttributeNode{Name: AttrCapture, Value: value}
 }
 
 // Charset creates a "charset" attribute
@@ -939,6 +1004,11 @@ func Checked(checked ...bool) Node {
 // Class creates a "class" attribute
 func Class(value string) Node {
 	return &AttributeNode{Name: AttrClass, Value: value}
+}
+
+// Cols creates a "cols" attribute
+func Cols(cols int) Node {
+	return &AttributeNode{Name: AttrCols, Value: strconv.Itoa(cols)}
 }
 
 // Content creates a "content" attribute
@@ -975,6 +1045,11 @@ func For(id string) Node {
 	return &AttributeNode{Name: AttrFor, Value: id}
 }
 
+// Height creates a "height" attribute
+func Height(height string) Node {
+	return &AttributeNode{Name: AttrHeight, Value: height}
+}
+
 // Hidden creates a "hidden" attribute
 func Hidden(hidden ...bool) Node {
 	if len(hidden) > 0 && !hidden[0] {
@@ -983,9 +1058,67 @@ func Hidden(hidden ...bool) Node {
 	return &AttributeNode{Name: AttrHidden, Value: ""}
 }
 
+// Href creates an "href" attribute
+func Href(value string) Node {
+	return &AttributeNode{Name: AttrHref, Value: value}
+}
+
+// Id creates an "id" attribute
+func Id(value string) Node {
+	return &AttributeNode{Name: AttrId, Value: value}
+}
+
+// Integrity creates an "integrity" node
+func Integrity(value string) Node {
+	return &AttributeNode{Name: AttrIntegrity, Value: value}
+}
+
 // Lang creates a "lang" attribute
 func Lang(lang string) Node {
 	return &AttributeNode{Name: AttrLang, Value: lang}
+}
+
+// Max creates a "max" attribute
+func Max(value string) Node {
+	return &AttributeNode{Name: AttrMax, Value: value}
+}
+
+// MaxLength creates a "maxlength" attribute
+func MaxLength(value int) Node {
+	return &AttributeNode{Name: AttrMaxlength, Value: strconv.Itoa(value)}
+}
+
+// MinLength creates a "minlength" attribute
+func MinLength(value int) Node {
+	return &AttributeNode{Name: AttrMinlength, Value: strconv.Itoa(value)}
+}
+
+// Method creates a "method" attribute
+func Method(method string) Node {
+	return &AttributeNode{Name: AttrMethod, Value: method}
+}
+
+// Min creates a "min" attribute
+func Min(value string) Node {
+	return &AttributeNode{Name: AttrMin, Value: value}
+}
+
+// Name creates a "name" attribute
+func Name(value string) Node {
+	return &AttributeNode{Name: AttrName, Value: value}
+}
+
+// NoValidate creates a "novalidate" attribute
+func NoValidate(novalidate ...bool) Node {
+	if len(novalidate) > 0 && !novalidate[0] {
+		return nil
+	}
+	return &AttributeNode{Name: AttrNovalidate, Value: ""}
+}
+
+// Pattern creates a "pattern" attributew
+func Pattern(pattern string) Node {
+	return &AttributeNode{Name: AttrPattern, Value: pattern}
 }
 
 // Placeholder creates a "placeholder" attribute
@@ -1001,6 +1134,18 @@ func Readonly(readonly ...bool) Node {
 	return &AttributeNode{Name: AttrReadonly, Value: ""}
 }
 
+// Rel creates a "rel" attribute
+func Rel(value string) Node {
+	return &AttributeNode{Name: AttrRel, Value: value}
+}
+
+var relStylesheetnode = &AttributeNode{Name: AttrRel, Value: "stylesheet"}
+
+// RelStylesheet creates a rel="stylesheet" attribute
+func RelStylesheet() Node {
+	return relStylesheetnode
+}
+
 // Required creates a "required" attribute
 func Required(required ...bool) Node {
 	if len(required) > 0 && !required[0] {
@@ -1012,6 +1157,21 @@ func Required(required ...bool) Node {
 // Role creates a "role" attribute
 func Role(role string) Node {
 	return &AttributeNode{Name: AttrRole, Value: role}
+}
+
+// Rows creates a "rows" attribute
+func Rows(rows int) Node {
+	return &AttributeNode{Name: AttrRows, Value: strconv.Itoa(rows)}
+}
+
+// Src creates a "src" attribure
+func Src(value string) Node {
+	return &AttributeNode{Name: AttrSrc, Value: value}
+}
+
+// StyleAttr creates a "style" attribute
+func StyleAttr(style string) Node {
+	return &AttributeNode{Name: AttrStyle, Value: style}
 }
 
 // Tabindex creates a "tabindex" attribute
@@ -1036,46 +1196,9 @@ func TestId(value string) Node {
 	return &AttributeNode{Name: AttrDatatestid, Value: value}
 }
 
-// Id creates an "id" attribute
-func Id(value string) Node {
-	return &AttributeNode{Name: AttrId, Value: value}
-}
-
-// Href creates an "href" attribute
-func Href(value string) Node {
-	return &AttributeNode{Name: AttrHref, Value: value}
-}
-
-// Name creates a "name" attribute
-func Name(value string) Node {
-	return &AttributeNode{Name: AttrName, Value: value}
-}
-
 // Property creates a "property" attribute
 func Property(value string) Node {
 	return &AttributeNode{Name: AttrProperty, Value: value}
-}
-
-// Rel creates a "rel" attribute
-func Rel(value string) Node {
-	return &AttributeNode{Name: AttrRel, Value: value}
-}
-
-var relStylesheetnode = &AttributeNode{Name: AttrRel, Value: "stylesheet"}
-
-// RelStylesheet creates a rel="stylesheet" attribute
-func RelStylesheet() Node {
-	return relStylesheetnode
-}
-
-// Src creates a "src" attribure
-func Src(value string) Node {
-	return &AttributeNode{Name: AttrSrc, Value: value}
-}
-
-// StyleAttr creates a "style" attribute
-func StyleAttr(style string) Node {
-	return &AttributeNode{Name: AttrStyle, Value: style}
 }
 
 // Type creates a "type" attribute
@@ -1086,6 +1209,11 @@ func Type(value string) Node {
 // Value creates a "value" attribute
 func Value(value string) Node {
 	return &AttributeNode{Name: AttrValue, Value: value}
+}
+
+// Width creates a "width" attribute
+func Width(width string) Node {
+	return &AttributeNode{Name: AttrWidth, Value: width}
 }
 
 //
