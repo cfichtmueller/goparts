@@ -950,6 +950,11 @@ func Action(action string) Node {
 	return &AttributeNode{Name: AttrAction, Value: action}
 }
 
+// Align creates an "align" attribute
+func Align(align string) Node {
+	return &AttributeNode{Name: AttrAlign, Value: align}
+}
+
 // Allow creates an "allow" attribute
 func Allow(policy string) Node {
 	return &AttributeNode{Name: AttrAllow, Value: policy}
@@ -1043,6 +1048,39 @@ func Draggable(draggable ...bool) Node {
 // For creates a "for" attribute
 func For(id string) Node {
 	return &AttributeNode{Name: AttrFor, Value: id}
+}
+
+// FormAttr creates a "form" attribute
+func FormAttr(form string) Node {
+	return &AttributeNode{Name: AttrForm, Value: form}
+}
+
+// Formaction creates a "formaction" attribute
+func Formaction(action string) Node {
+	return &AttributeNode{Name: AttrFormaction, Value: action}
+}
+
+// Formenctype creates a "formenctype" attribute
+func Formenctype(enctype string) Node {
+	return &AttributeNode{Name: AttrFormenctype, Value: enctype}
+}
+
+// Formmethod creates a "formmethod" attribute
+func Formmethod(method string) Node {
+	return &AttributeNode{Name: AttrFormmethod, Value: method}
+}
+
+// Formnovalidate creates a "formnovalidate" attribute
+func Formnovalidate(novalidate ...bool) Node {
+	if len(novalidate) > 0 && !novalidate[0] {
+		return nil
+	}
+	return &AttributeNode{Name: AttrFormnovalidate, Value: ""}
+}
+
+// Formtarget creates a "formtarget" attribute
+func Formtarget(target string) Node {
+	return &AttributeNode{Name: AttrFormtarget, Value: target}
 }
 
 // Height creates a "height" attribute
