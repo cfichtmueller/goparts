@@ -21,6 +21,7 @@ var (
 
 type Node interface {
 	Render(w io.Writer) error
+	Write(w io.Writer) (int, error)
 }
 
 type ElementNode struct {
@@ -38,30 +39,44 @@ func E(tag string, children ...Node) Node {
 }
 
 func (e *ElementNode) Render(w io.Writer) error {
-	if _, err := w.Write([]byte("<" + e.Tag)); err != nil {
-		return err
+	_, err := e.Write(w)
+	return err
+}
+
+func (e *ElementNode) Write(w io.Writer) (int, error) {
+	n := 0
+	cn, err := w.Write([]byte("<" + e.Tag))
+	if err != nil {
+		return n + cn, err
 	}
+	n += cn
 	childCount := 0
 	for _, c := range e.Children {
 		if a, ok := c.(*AttributeNode); ok {
 			childCount++
-			if _, err := w.Write(space); err != nil {
-				return err
+			cn, err := w.Write(space)
+			if err != nil {
+				return n + cn, err
 			}
-			if err := a.Render(w); err != nil {
-				return err
+			n += cn
+			cn, err = a.Write(w)
+			if err != nil {
+				return n + cn, err
 			}
+			n += cn
 		}
 	}
 
 	if e.AllowOmission && childCount == len(e.Children) {
-		_, err := w.Write([]byte(" />"))
-		return err
+		cn, err := w.Write([]byte(" />"))
+		return n + cn, err
 	}
 
-	if _, err := w.Write([]byte(">")); err != nil {
-		return err
+	cn, err = w.Write([]byte(">"))
+	if err != nil {
+		return n + cn, err
 	}
+	n += cn
 	hasSub := false
 	for _, c := range e.Children {
 		if c == nil {
@@ -72,21 +87,27 @@ func (e *ElementNode) Render(w io.Writer) error {
 		}
 		if _, ok := c.(*ElementNode); ok {
 			hasSub = true
-			if _, err := w.Write(newline); err != nil {
-				return err
+			cn, err = w.Write(newline)
+			if err != nil {
+				return n + cn, err
 			}
+			n += cn
 		}
-		if err := c.Render(w); err != nil {
-			return err
+		cn, err = c.Write(w)
+		if err != nil {
+			return n + cn, err
 		}
+		n += cn
 	}
 	if hasSub {
-		if _, err := w.Write(newline); err != nil {
-			return err
+		cn, err = w.Write(newline)
+		if err != nil {
+			return n + cn, err
 		}
+		n += cn
 	}
-	_, err := w.Write([]byte("</" + e.Tag + ">"))
-	return err
+	cn, err = w.Write([]byte("</" + e.Tag + ">"))
+	return n + cn, err
 }
 
 type AttributeNode struct {
@@ -103,12 +124,15 @@ func Attr(name, value string) Node {
 }
 
 func (a *AttributeNode) Render(w io.Writer) error {
-	if a.Value == "" {
-		_, err := w.Write([]byte(a.Name))
-		return err
-	}
-	_, err := w.Write([]byte(a.Name + "=\"" + a.Value + "\""))
+	_, err := w.Write([]byte(a.Name))
 	return err
+}
+
+func (a *AttributeNode) Write(w io.Writer) (int, error) {
+	if a.Value == "" {
+		return w.Write([]byte(a.Name))
+	}
+	return w.Write([]byte(a.Name + "=\"" + a.Value + "\""))
 }
 
 type RawNode struct {
@@ -124,6 +148,10 @@ func (n *RawNode) Render(w io.Writer) error {
 	return err
 }
 
+func (n *RawNode) Write(w io.Writer) (int, error) {
+	return w.Write(n.Bytes)
+}
+
 type TextNode struct {
 	Value string
 }
@@ -134,8 +162,12 @@ func Text(value string) Node {
 }
 
 func (t *TextNode) Render(w io.Writer) error {
-	_, err := w.Write([]byte(template.HTMLEscapeString(t.Value)))
+	_, err := t.Write(w)
 	return err
+}
+
+func (t *TextNode) Write(w io.Writer) (int, error) {
+	return w.Write([]byte(template.HTMLEscapeString(t.Value)))
 }
 
 type GroupNode struct {
@@ -148,6 +180,12 @@ func Group(children ...Node) Node {
 }
 
 func (g *GroupNode) Render(w io.Writer) error {
+	_, err := g.Write(w)
+	return err
+}
+
+func (g *GroupNode) Write(w io.Writer) (int, error) {
+	n := 0
 	first := true
 	for _, c := range g.children {
 		if c == nil {
@@ -156,13 +194,19 @@ func (g *GroupNode) Render(w io.Writer) error {
 		if first {
 			first = false
 		} else {
-			w.Write(newline)
+			cn, err := w.Write(newline)
+			if err != nil {
+				return n + cn, err
+			}
+			n += cn
 		}
-		if err := c.Render(w); err != nil {
-			return err
+		cn, err := c.Write(w)
+		if err != nil {
+			return n + cn, err
 		}
+		n += cn
 	}
-	return nil
+	return n, nil
 }
 
 // Functions
